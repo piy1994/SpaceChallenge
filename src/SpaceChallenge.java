@@ -8,22 +8,15 @@ import java.lang.Math;
 public class SpaceChallenge {
     public static void main (String [] args){
         Simulation sim = new Simulation();
-        String phase1 = "E:\\Machine_learning_nd\\JavaPrep\\SpaceChallenge\\out\\production\\SpaceChallenge\\phase-1.txt";
-
-        ArrayList<Item> items;
-        // Phase 1
-        try{
-             items = sim.loadItems(phase1);
-        }
-        catch (FileNotFoundException e){
-            System.out.println("There was some error");
-            return;
-        }
-
-        ArrayList<U1> arrayU1 = sim.loadU1(items);
-        ArrayList<U2> arrayU2 = sim.loadU2(items);
 
 
+        System.out.println("For Phase 1 we have the following ");
+        String phase1 = "phase-1.txt";
+        sim.runPhase(phase1);
+
+        System.out.println("For Phase 2 we have the following");
+        String phase2 = "phase-2.txt";
+        sim.runPhase(phase2);
     }
 }
 
@@ -192,5 +185,45 @@ class Simulation {
         return arrayU2;
     }
 
+    int runSimulation(ArrayList arrayRocket){
+        // arrayRocket will he of type U1 or U2, but when we use parent's reference and childs methods, we see that
+        // child's functions are used
+        int totBudget = 0;
+        for(int i=0;i<arrayRocket.size();i++){
+            Rocket rocket = (Rocket) arrayRocket.get(i);
+            // both should work, else keep on adding budget and relaunch
+            while( !(rocket.launch() && rocket.land())){
+                System.out.println("Rocket with cost " + rocket.cost + " failed");
+                totBudget += rocket.cost;
+            }
+            // When  both worked, add a final budjet
+            System.out.println("Rocket with cost " + rocket.cost + " Ran");
+            totBudget += rocket.cost;
+        }
+        return totBudget;
+    }
+
+    void runPhase(String phase){
+
+        ArrayList<Item> items;
+        // Phase 1
+        try{
+            items = this.loadItems(phase);
+        }
+        catch (FileNotFoundException e){
+            System.out.println("There was some error");
+            return;
+        }
+
+        ArrayList<U1> arrayU1 = this.loadU1(items);
+        ArrayList<U2> arrayU2 = this.loadU2(items);
+
+        int totBudgetForU1 = this.runSimulation(arrayU1);
+        int totBudgetForU2 = this.runSimulation(arrayU2);
+
+        System.out.println("Total cost for array of U1 : " + totBudgetForU1);
+        System.out.println("Total cost for array of U2 : " + totBudgetForU2);
+    }
 
 }
+
